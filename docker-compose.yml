@@ -1,0 +1,12 @@
+services:
+  api:
+    build: ./api
+    container_name: server-nitro
+    volumes:
+      - minecraft:/usr/src/app/minecraft
+    ports:
+      - "3000:3000"
+    restart: "always"
+
+volumes:
+  minecraft:
