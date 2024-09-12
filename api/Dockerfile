@@ -23,7 +23,6 @@ COPY . .
 ENV NODE_ENV=production
 ENV PORT 3000
 RUN bun run build
-RUN ls
 
 # copy production dependencies and source code into final image
 FROM base AS release
@@ -31,10 +30,16 @@ COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/.output/server ./server
 COPY --from=prerelease /usr/src/app/package.json .
 
-# Change ownership of the minecraft volume to the bun user
-RUN mkdir -p /usr/src/app/minecraft && chown -R bun:bun /usr/src/app/minecraft
+# Install dependencies
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /usr/src/app/minecraft
+# COPY ../_minecraft/latest/* /usr/src/app/minecraft
+RUN chown -R bun:bun /usr/src/app/minecraft
+COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+RUN chown bun:bun /usr/src/app/entrypoint.sh && chmod u+x /usr/src/app/entrypoint.sh
 USER bun
 
 # run the app
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "server/index.mjs" ]
+ENTRYPOINT [ "/usr/src/app/entrypoint.sh", "bun", "run", "server/index.mjs" ]
