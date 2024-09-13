@@ -34,12 +34,10 @@ COPY --from=prerelease /usr/src/app/package.json .
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/src/app/minecraft
-# COPY ../_minecraft/latest/* /usr/src/app/minecraft
 RUN chown -R bun:bun /usr/src/app/minecraft
-COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
 RUN chown bun:bun /usr/src/app/entrypoint.sh && chmod u+x /usr/src/app/entrypoint.sh
 USER bun
 
 # run the app
 EXPOSE 3000/tcp
-ENTRYPOINT [ "/usr/src/app/entrypoint.sh", "bun", "run", "server/index.mjs" ]
+ENTRYPOINT [ "bun", "run", "server/index.mjs" ]

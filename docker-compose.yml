@@ -1,13 +1,30 @@
 services:
   api:
     build: ./api
-    container_name: server-nitro
     volumes:
       - minecraft:/usr/src/app/minecraft
     ports:
       - "3000:3000"
     restart: "always"
+  mc:
+    image: itzg/minecraft-server
+    tty: false
+    stdin_open: false
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      MEMORY: "512M"
+      GUI: "false"
+      USE_AIKAR_FLAGS: "true"
+      ENABLE_RCON: "false"
+      TYPE: ${TYPE:-PAPER}
+      VERSION: ${VERSION:?error}
+      MOTD: |
+        The server image works??
+        - Running on %VERSION% (%TYPE%)
+    volumes:
+      - minecraft:/data
 
 volumes:
   minecraft:
-    driver: local
