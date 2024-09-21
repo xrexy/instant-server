@@ -31,11 +31,10 @@ COPY --from=prerelease /usr/src/app/.output/server ./server
 COPY --from=prerelease /usr/src/app/package.json .
 
 # Install dependencies
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/src/app/minecraft
 RUN chown -R bun:bun /usr/src/app/minecraft
-RUN chown bun:bun /usr/src/app/entrypoint.sh && chmod u+x /usr/src/app/entrypoint.sh
 USER bun
 
 # run the app
